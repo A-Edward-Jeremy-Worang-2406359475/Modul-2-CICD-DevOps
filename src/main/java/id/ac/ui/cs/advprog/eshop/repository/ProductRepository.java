@@ -35,4 +35,15 @@ public class ProductRepository{
             }
         }
     }
+
+    public boolean deleteById(String id) {
+        for (int i = 0; i < productData.size(); i++) {
+            if (productData.get(i).getProductId().equals(id)) {
+                productData.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
