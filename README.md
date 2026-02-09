@@ -45,3 +45,8 @@ duplication. This reduces maintainability if the setup changes URL format, confi
 I must update multiple files and may forget one causing inconsistent tests. It can also reduce readability 
 because repeated boilerplate hides the actual test intent, and encourages magic strings
 (hard-coded URLs/selectors) scattered across classes.
+To improve cleanliness, I should refactor shared setup into a base class 
+example BaseFunctionalTest with @LocalServerPort, baseUrl, and @BeforeEach or extract common 
+steps into helper methods. I should also standardize locators using stable IDs and reuse.
+constants for common routes like /product/create and /product/list. 
+This keeps tests consistent, readable, and easier to change as the test suite grows.
