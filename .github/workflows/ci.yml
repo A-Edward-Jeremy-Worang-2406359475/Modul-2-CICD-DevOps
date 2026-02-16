@@ -1,21 +1,25 @@
+name: CI
+
 on:
   push:
   pull_request:
 
 jobs:
   test:
-    name: Run tests
     runs-on: ubuntu-22.04
     steps:
-      - name: Check out the Git repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Java toolchain
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "21"
-          cache: "gradle"
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Run unit tests
         run: ./gradlew test
