@@ -37,12 +37,20 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editProductPage(@PathVariable String id, Model model) {
-        Product product = service.findById(id);
-        if (product == null) return "redirect:/product/list"; // simple fallback
-        model.addAttribute("product", product);
-        return "EditProduct";
+    public String editProductPage(@PathVariable("id") final String productId, final Model model) {
+        final Product product = service.findById(productId);
+
+        final String viewName;
+        if (product == null) {
+            viewName = "redirect:/product/list";
+        } else {
+            model.addAttribute("product", product);
+            viewName = "EditProduct";
+        }
+
+        return viewName;
     }
+
 
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product) {
