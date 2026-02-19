@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
+    private final String homeView;
+
     public HomeController() {
-        // explicit no-args constructor for PMD
+        this.homeView = "HomePage";
     }
 
     @GetMapping("/")
     public String homePage() {
-        return "HomePage";
+        return homeView;
     }
 }

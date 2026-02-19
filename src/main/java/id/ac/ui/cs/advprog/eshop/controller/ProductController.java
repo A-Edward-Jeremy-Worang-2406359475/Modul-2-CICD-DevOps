@@ -13,6 +13,12 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
+    private final ProductService productService;
+
+    public ProductController(final ProductService productService) {
+        this.productService = productService;
+    }
+
     @Autowired
     private ProductService service;
 
