@@ -3,6 +3,17 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.5.10"
     id("io.spring.dependency-management") version "1.1.7"
+    id("pmd")
+}
+
+pmd {
+    toolVersion = "7.0.0-rc4"
+    isConsoleOutput = true
+    ruleSets = listOf(
+        "category/java/errorprone.xml",
+        "category/java/bestpractices.xml",
+        "category/java/codestyle.xml"
+    )
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -67,6 +78,15 @@ tasks.register<Test>("functionalTest") {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
+
+
+tasks.withType<Pmd>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
 
 tasks.test {
     useJUnitPlatform()
