@@ -23,5 +23,4 @@ WORKDIR /opt/eshop
 COPY --from=builder --chown=${USER_UID}:${USER_GID} /src/eshop/build/libs/*.jar app.jar
 
 EXPOSE 8080
-ENTRYPOINT ["sh","-c","java -Dserver.port=$PORT -jar app.jar"]
-CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
+CMD ["java","-jar","app.jar"]
