@@ -1,4 +1,4 @@
-Reflection 1:
+**Reflection 1:**
 
 I have learned how to implement a basic CRUD but instead doing it in the django framework I did it
 in the SpringBoot framework, where instead os using the MVT method I used the MVC structure. I applied
@@ -19,7 +19,7 @@ database. Overall the current structure is clean and works but adding validation
 and better error handling would improve reliability and security I hope to keep learning SpringBoot especially 
 the annotations im still unfamiliar with and previous java concepts.
 
-Reflection 2:
+**Reflection 2:**
 
 1. After writing the unit tests for Edit and Delete Product 
 I felt more confident because the tests give immediate feedback that core behaviors still work after code changes
@@ -50,3 +50,38 @@ example BaseFunctionalTest with @LocalServerPort, baseUrl, and @BeforeEach or ex
 steps into helper methods. I should also standardize locators using stable IDs and reuse.
 constants for common routes like /product/create and /product/list. 
 This keeps tests consistent, readable, and easier to change as the test suite grows.
+
+
+**Reflection 3**
+
+1. List the code quality issue(s) that you fixed during the exercise and explain your strategy
+   on fixing them.
+
+Kita menggunakan PMD sebagai code quality test karena di module menyatakan minimal fix 1 code quality issue
+saya menfix 2 issue saja.
+
+pertama saya fix berdasarkan pmd report adalah MethodArgumentCouldBeFinal issue di EshopApplication, nah berdasarkan
+saran dari PMD, saya tinggal tambahkan paramater tersebut sebagai final, karena pada kedepannya itu tidak akan pernah
+reassigned.
+
+kedua saya fix AtLeastOneConstructor issue di HomeController.java, saya secara explicit menambahkan constructor
+dan digunakan meaningfully seperti initializing field tersebut sebagai constant view name. Strategi ini adalah
+untuk memenuhi aturan dan memastikan controller logic simple dan menghindari dummy constructor.
+
+2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current
+   implementation has met the definition of Continuous Integration and Continuous
+   Deployment? Explain the reasons (minimum 3 sentences)!
+
+Kondisi GitHub Actions sekarang di repo saya telah memenuhi definsi dari continous integration, karena
+setiap perubahan yang dipush atau create PR itu secara automatis mentrigger jobs yang mengbuild project,
+menajalankan test dan menjalankan static analysis seperti pmd. Hal ini memastikan kode saya terus divalidasi
+terhadap shared codebase dan issue bisa terdeteksi sejak awal.
+
+Untuk continous deployment, pipeline saya telah juga memenuhi, karena setiap push/merge ke main branch
+mentrigger automated deployment workflow, ke Paas yang saya gunakan yaitu heroku, tanpa perlu require deployment step
+secara manual. Tetapi bagian continous ini masih bergantung pada teamworkflow yaitu deployment hanya terjadi ketika ada
+perubahan dimerge ke main, jadi ini bersifat seprti continous deployment di main branch, dan continous delivery
+untuk delivery feature branches. Sebagai tambahan deployment reliability diimproved karena deploy workflow menjalankan
+test dulu sebelum deployment.
+
+deployment link: https://eshopadproedward-97110f3a90eb.herokuapp.com/
