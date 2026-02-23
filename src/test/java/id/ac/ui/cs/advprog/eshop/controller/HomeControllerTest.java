@@ -1,13 +1,14 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -17,11 +18,17 @@ class HomeControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void homePage_rendersHomePageWithGoToProductListButton() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Welcome")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Go to Product List")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("/product/list")));
+    void homePageRendersHomePageWithGoToProductListButton() throws Exception {
+        final String responseBody = mockMvc.perform(get("/"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        final boolean isSuccessful =
+                responseBody.contains("Welcome")
+                        && responseBody.contains("Go to Product List")
+                        && responseBody.contains("/product/list");
+
+        assertTrue(isSuccessful, "Home page should contain Welcome + button + link to /product/list");
     }
 }

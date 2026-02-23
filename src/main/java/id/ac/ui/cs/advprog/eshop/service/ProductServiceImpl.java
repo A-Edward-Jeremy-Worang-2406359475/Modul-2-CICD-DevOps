@@ -2,7 +2,6 @@ package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,11 +12,15 @@ import java.util.UUID;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    // PMD: Each class should declare at least one constructor
+    public ProductServiceImpl(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @Override
-    public Product create(Product product) {
+    public Product create(final Product product) {
         if (product.getProductId() == null || product.getProductId().isBlank()) {
             product.setProductId(UUID.randomUUID().toString());
         }
@@ -27,25 +30,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findAll() {
-        Iterator<Product> productIterator = productRepository.findAll();
-        List<Product> allProduct = new ArrayList<>();
-        productIterator.forEachRemaining(allProduct::add);
-        return allProduct;
+        final Iterator<Product> productIterator = productRepository.findAll();
+        final List<Product> allProducts = new ArrayList<>();
+        productIterator.forEachRemaining(allProducts::add);
+        return allProducts;
     }
 
     @Override
-    public Product findById(String id) {
-        return productRepository.findById(id);
+    public Product findById(final String productId) {
+        return productRepository.findById(productId);
     }
 
     @Override
-    public void update(Product product) {
+    public void update(final Product product) {
         productRepository.update(product);
     }
 
     @Override
-    public boolean deleteById(String id) {
-        return productRepository.deleteById(id);
+    public boolean deleteById(final String productId) {
+        return productRepository.deleteById(productId);
     }
-
 }
