@@ -37,19 +37,21 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_newProductAppearsInProductList(ChromeDriver driver) {
-        String productName = "Selenium Product " + UUID.randomUUID();
-        String productQuantity = "7";
+    void createProductNewProductAppearsInProductList(final ChromeDriver driver) {
+        final String productName = "Selenium Product " + UUID.randomUUID();
+        final String productQuantity = "7";
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.get(baseUrl + "/product/create");
 
-        WebElement nameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nameInput")));
+        final WebElement nameInput = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("nameInput"))
+        );
         nameInput.clear();
         nameInput.sendKeys(productName);
 
-        WebElement qtyInput = driver.findElement(By.id("quantityInput"));
+        final WebElement qtyInput = driver.findElement(By.id("quantityInput"));
         qtyInput.clear();
         qtyInput.sendKeys(productQuantity);
 
@@ -60,9 +62,10 @@ class CreateProductFunctionalTest {
                 ExpectedConditions.visibilityOfElementLocated(By.tagName("table"))
         ));
 
-        String pageSource = driver.getPageSource();
-        assertTrue(pageSource.contains(productName), "Product name should appear in Product List page");
-        assertTrue(pageSource.contains(productQuantity), "Product quantity should appear in Product List page");
+        final String pageSource = driver.getPageSource();
+        final boolean isSuccessful =
+                pageSource.contains(productName) && pageSource.contains(productQuantity);
 
+        assertTrue(isSuccessful, "Created product should appear in Product List page");
     }
 }
