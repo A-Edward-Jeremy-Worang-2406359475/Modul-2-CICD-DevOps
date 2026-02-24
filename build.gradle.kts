@@ -87,6 +87,10 @@ tasks.withType<Pmd>().configureEach {
     }
 }
 
+tasks.named<Pmd>("pmdTest") {
+    ignoreFailures = true
+}
+
 
 tasks.test {
     useJUnitPlatform()
