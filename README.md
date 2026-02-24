@@ -58,15 +58,29 @@ This keeps tests consistent, readable, and easier to change as the test suite gr
    on fixing them.
 
 Kita menggunakan PMD sebagai code quality test karena di module menyatakan minimal fix 1 code quality issue
-saya menfix 2 issue saja.
+saya telah memperbaiki 75% code quality. Berdasarkan git commit log yang berjudul "Finished Reflection" dari total 
+173 detected issue dari PMD saya telah memperbaiki 147 (buktinya bisa dilihat di git commit log yang berjudul
+"Fixed 75% of the code quality issue detected by the pmd." yaitu sekitaran 85%
 
+cara saya memperbaiki code quality issue tersebut adalah sebagai berikut.
+
+Salah satu contoh:
 pertama saya fix berdasarkan pmd report adalah MethodArgumentCouldBeFinal issue di EshopApplication, nah berdasarkan
 saran dari PMD, saya tinggal tambahkan paramater tersebut sebagai final, karena pada kedepannya itu tidak akan pernah
 reassigned.
-
-kedua saya fix AtLeastOneConstructor issue di HomeController.java, saya secara explicit menambahkan constructor
+ 
+Contoh kedua saya fix AtLeastOneConstructor issue di HomeController.java, saya secara explicit menambahkan constructor
 dan digunakan meaningfully seperti initializing field tersebut sebagai constant view name. Strategi ini adalah
 untuk memenuhi aturan dan memastikan controller logic simple dan menghindari dummy constructor.
+
+Nah pola tersebut diikuti berkali-kali, dari pmd report saya dengan mudah dapat debug.
+Jadi saya prioritaskan main dulu, test belakangan
+Saya memperbaiki semua PMD issues di src/main terlebih dahulu karena berdampak langsung ke maintainability 
+dan risiko bug pada runtime setelah itu baru menangani issue di src/test. Terus saya perbaiki yang mudah-mudah dulu
+seperti adding final dan constant, terus ada safety check untuk menjaga logika agar tidak mengubah tujuan dari program.
+Dan tentunya lakukan pmd test berulang kali.
+
+
 
 2. Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current
    implementation has met the definition of Continuous Integration and Continuous
