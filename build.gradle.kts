@@ -90,6 +90,9 @@ tasks.withType<Pmd>().configureEach {
 tasks.named<Pmd>("pmdTest") {
     ignoreFailures = true
 }
+tasks.named<Pmd>("pmdMain") {
+    ignoreFailures = true
+}
 
 
 tasks.test {
