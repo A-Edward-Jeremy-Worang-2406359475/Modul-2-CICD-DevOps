@@ -4,9 +4,13 @@ import id.ac.ui.cs.advprog.eshop.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductRepositoryEditDeleteTest {
+
+    private static final String PRODUCT_ID_1 = "p-1";
+    private static final String PRODUCT_ID_2 = "p-2";
+    private static final String PRODUCT_ID_MISSING = "p-999";
 
     private ProductRepository productRepository;
 
@@ -15,81 +19,83 @@ class ProductRepositoryEditDeleteTest {
         productRepository = new ProductRepository();
     }
 
-    private Product makeProduct(String id, String name, int qty) {
-        Product p = new Product();
-        p.setProductId(id);
-        p.setProductName(name);
-        p.setProductQuantity(qty);
-        return p;
+    private Product makeProduct(final String productId, final String name, final int quantity) {
+        final Product product = new Product();
+        product.setProductId(productId);
+        product.setProductName(name);
+        product.setProductQuantity(quantity);
+        return product;
     }
 
-
     @Test
-    void update_existingProduct_updatesStoredProduct() {
-
-        Product original = makeProduct("p-1", "Shampoo A", 10);
+    void updateExistingProductUpdatesStoredProduct() {
+        final Product original = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
         productRepository.create(original);
 
-
-        Product updated = makeProduct("p-1", "Shampoo A (Edited)", 99);
+        final Product updated = makeProduct(PRODUCT_ID_1, "Shampoo A (Edited)", 99);
         productRepository.update(updated);
 
+        final Product fromRepo = productRepository.findById(PRODUCT_ID_1);
+        final boolean isSuccessful =
+                fromRepo != null
+                        && PRODUCT_ID_1.equals(fromRepo.getProductId())
+                        && "Shampoo A (Edited)".equals(fromRepo.getProductName())
+                        && fromRepo.getProductQuantity() == 99;
 
-        Product fromRepo = productRepository.findById("p-1");
-        assertNotNull(fromRepo);
-        assertEquals("p-1", fromRepo.getProductId());
-        assertEquals("Shampoo A (Edited)", fromRepo.getProductName());
-        assertEquals(99, fromRepo.getProductQuantity());
+        assertTrue(isSuccessful, "Update should replace stored product fields for existing ID");
     }
 
     @Test
-    void update_nonExistingProduct_doesNothing() {
-
-        Product original = makeProduct("p-1", "Shampoo A", 10);
+    void updateNonExistingProductDoesNothing() {
+        final Product original = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
         productRepository.create(original);
 
-
-        Product updated = makeProduct("p-999", "Does Not Exist", 123);
+        final Product updated = makeProduct(PRODUCT_ID_MISSING, "Does Not Exist", 123);
         productRepository.update(updated);
 
-        Product fromRepo = productRepository.findById("p-1");
-        assertNotNull(fromRepo);
-        assertEquals("Shampoo A", fromRepo.getProductName());
-        assertEquals(10, fromRepo.getProductQuantity());
+        final Product fromRepo = productRepository.findById(PRODUCT_ID_1);
+        final Product missing = productRepository.findById(PRODUCT_ID_MISSING);
 
-        assertNull(productRepository.findById("p-999"));
-    }
+        final boolean isSuccessful =
+                fromRepo != null
+                        && "Shampoo A".equals(fromRepo.getProductName())
+                        && fromRepo.getProductQuantity() == 10
+                        && missing == null;
 
-
-    @Test
-    void delete_existingProduct_removesProductAndReturnsTrue() {
-
-        Product p1 = makeProduct("p-1", "Shampoo A", 10);
-        Product p2 = makeProduct("p-2", "Shampoo B", 20);
-        productRepository.create(p1);
-        productRepository.create(p2);
-
-
-        boolean deleted = productRepository.deleteById("p-1");
-
-
-        assertTrue(deleted);
-        assertNull(productRepository.findById("p-1"));
-        assertNotNull(productRepository.findById("p-2"));
+        assertTrue(isSuccessful, "Update should not add new product if ID does not exist");
     }
 
     @Test
-    void delete_nonExistingProduct_returnsFalseAndKeepsData() {
+    void deleteExistingProductRemovesProductAndReturnsTrue() {
+        final Product product1 = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
+        final Product product2 = makeProduct(PRODUCT_ID_2, "Shampoo B", 20);
+        productRepository.create(product1);
+        productRepository.create(product2);
 
-        Product p1 = makeProduct("p-1", "Shampoo A", 10);
-        productRepository.create(p1);
+        final boolean deleted = productRepository.deleteById(PRODUCT_ID_1);
 
+        final Product shouldBeMissing = productRepository.findById(PRODUCT_ID_1);
+        final Product shouldRemain = productRepository.findById(PRODUCT_ID_2);
 
-        boolean deleted = productRepository.deleteById("p-999");
+        final boolean isSuccessful =
+                deleted && shouldBeMissing == null && shouldRemain != null;
 
+        assertTrue(isSuccessful, "Delete should remove existing product and keep other data intact");
+    }
 
-        assertFalse(deleted);
-        assertNotNull(productRepository.findById("p-1"));
-        assertNull(productRepository.findById("p-999"));
+    @Test
+    void deleteNonExistingProductReturnsFalseAndKeepsData() {
+        final Product product1 = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
+        productRepository.create(product1);
+
+        final boolean deleted = productRepository.deleteById(PRODUCT_ID_MISSING);
+
+        final Product stillThere = productRepository.findById(PRODUCT_ID_1);
+        final Product missing = productRepository.findById(PRODUCT_ID_MISSING);
+
+        final boolean isSuccessful =
+                !deleted && stillThere != null && missing == null;
+
+        assertTrue(isSuccessful, "Delete should return false for missing ID and keep existing data");
     }
 }

@@ -10,22 +10,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(SeleniumJupiter.class)
 class HomePageFunctionalTest {
-    /**
-     * The port number assigned to the running application during test execution.
-     * Set automatically during each test run by Spring Framework's test context.
-     */
+
     @LocalServerPort
     private int serverPort;
 
-    /**
-     * The base URL for testing. Default to {@code http://localhost}.
-     */
     @Value("${app.baseUrl:http://localhost}")
     private String testBaseUrl;
 
@@ -37,24 +31,20 @@ class HomePageFunctionalTest {
     }
 
     @Test
-    void pageTitle_isCorrect(ChromeDriver driver) throws Exception {
-        // Exercise
+    void pageTitleIsCorrect(final ChromeDriver driver) {
         driver.get(baseUrl);
-        String pageTitle = driver.getTitle();
+        final String pageTitle = driver.getTitle();
 
-        // Verify
-        assertEquals("ADV Shop", pageTitle);
+        final boolean isSuccessful = "ADV Shop".equals(pageTitle);
+        assertTrue(isSuccessful, "Page title should be 'ADV Shop'");
     }
 
     @Test
-    void welcomeMessage_homePage_isCorrect(ChromeDriver driver) throws Exception {
-        // Exercise
+    void welcomeMessageHomePageIsCorrect(final ChromeDriver driver) {
         driver.get(baseUrl);
-        String welcomeMessage = driver.findElement(By.tagName("h3"))
-                .getText();
+        final String welcomeMessage = driver.findElement(By.tagName("h3")).getText();
 
-        // Verify
-        assertEquals("Welcome", welcomeMessage);
+        final boolean isSuccessful = "Welcome".equals(welcomeMessage);
+        assertTrue(isSuccessful, "Welcome message should be 'Welcome'");
     }
-
 }

@@ -1,0 +1,52 @@
+name: Deploy to Heroku (Docker)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Authenticate to Heroku (via netrc)
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cat > ~/.netrc <<EOF
+          machine api.heroku.com
+            login heroku
+            password $HEROKU_API_KEY
+          machine git.heroku.com
+            login heroku
+            password $HEROKU_API_KEY
+          EOF
+          chmod 600 ~/.netrc
+
+      - name: Login to Heroku Container Registry
+        run: heroku container:login
+
+      - name: Build, Push, Release
+        env:
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run: |
+          heroku container:push web --app "$HEROKU_APP_NAME"
+          heroku container:release web --app "$HEROKU_APP_NAME"
