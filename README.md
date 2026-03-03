@@ -99,3 +99,75 @@ untuk delivery feature branches. Sebagai tambahan deployment reliability diimpro
 test dulu sebelum deployment.
 
 deployment link: https://eshopadproedward-97110f3a90eb.herokuapp.com/
+
+**Reflection 4**
+
+Notes disclaimer:Jadi sebeneranya kita sudah fix beberapa SOLID di before-solid karena github CI
+tidak akan menerima beberapa, jadi terpaksa perbaiki beberapa di before-solid agar bisa pass CInya untuk
+memenuhi statement "If there are no conflict then merge" di module
+
+1) Explain what principles you apply to your project!
+
+**SRP**
+- Jadii pertama kita melanggar SRP, dimana ProductController.java berisi dua controller 
+(ProductController dan CarController) serta mencampurkan concern product dan car dalam satu file. 
+Kita perbaiki hal tersebut dengan memisahkan file.
+- Kedua dalam hal SRP Sebelum refaktor, CarRepository memiliki dua tanggung jawab sekaligus:
+Menghasilkan ID mobil (misalnya UUID)
+Menyimpan dan mengelola data mobil (CRUD)
+Ssaya memisahkan proses pembuatan ID ke dalam komponen tersendiri
+
+
+**OCP**
+- Di sini kita membuat CarController dengan cara mewarisi (extends) ProductController. 
+Ini adalah bentuk reuse melalui inheritance yang memaksa kkita untuk mengubah  kode lama ketika menambah fitur baru.
+Domain baru (Car) seharusnya tidak mengharuskan kita “membuka” atau memodifikasi hierarki Product controller. 
+Searusnya CarController, CarService, dan CarRepository berdiri sendiri tanpa menyentuh flow Product.
+
+-Ini juga melanggar **LSP** CarController extends ProductController bukan hubungan is a yang valid.
+CarController tidak bisa menggantikan ProductController secara logis.
+Inheritance di sini hanya digunakan untuk reuse struktur/kode, bukan karena kesesuaian kontrak perilaku.
+Sehingga saya telah apply LSP dengan merefactor file tersebut
+
+**DIP**
+-Sebelumnya, CarServiceImpl bergantung langsung pada kelas konkret CarRepository. 
+Saya mengubahnya agar service bergantung pada abstraksi misalnya ICarRepository dan menggunakan constructor injection.
+
+2) Explain the advantages of applying SOLID principles to your project with examples
+- Perawatan dan perubahan menjadi lebih aman (SRP)
+
+Contoh
+Jika nanti format ID berrubah darii UUID menjadi format seperti CAR-0001, saya hanya perlu mengubah CarIdGenerator
+Saya tidak perlu menyentuh repository, service, atau controller.
+
+- Lebih mudah untuk diuji DIP
+
+Contoh:
+Karena CarServiceImpl bergantung pada ICarRepository, 
+saya bisa membuat repository palsu (mock/fake) saat melakukan unit test.
+
+- Lebih fleksibel untuk dikembangkann buat OCP
+
+Contohh
+Saat ini repository masih menggunakan List<Car> (in-memory). 
+Jika nanti ingin menggunakan database (misalnya JPA), saya cukup membuat JpaCarRepository implements ICarRepository.
+Service dan controller tidak perlu diubah.
+
+3) Explain the disadvantages of not applying SOLID principles to your project with examples.
+
+-Coupling yang tinggi
+Jika ID generation dan penyimpanan data bercampur dalam satu kelas,
+perubahan kecil pada format ID bisa menyebabkan.
+Fungsi findById gagal
+Update/delete tidak bekerjaa
+Controller error dll
+
+-Sulit untuk diuji
+Contoh:
+Jika service langsung bergantung pada repository konkret tanpa abstraksi, maka saat testing kita harus menggunakan
+repository asli.
+
+- Kode menjadi sulit dikembangkan yaitu melanggar OCP
+Jika ingin mengganti penyimpanan dari in-memory ke database, kita harus mengubah banyak file sekaligus.
+
+-Kelas menjadi terlalu besar dan kompleks dimana itu melanggar SRP
