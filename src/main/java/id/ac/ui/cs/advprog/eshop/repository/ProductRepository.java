@@ -4,61 +4,57 @@ import id.ac.ui.cs.advprog.eshop.model.Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class ProductRepository {
+public class ProductRepository implements IProductRepository {
 
     private final List<Product> productData;
-
 
     public ProductRepository() {
         this.productData = new ArrayList<>();
     }
 
-    public Product create(final Product product) {
+    @Override
+    public Product save(final Product product) {
         productData.add(product);
         return product;
     }
 
-    public Iterator<Product> findAll() {
-        return productData.iterator();
+    @Override
+    public List<Product> findAll() {
+        return new ArrayList<>(productData);
     }
 
-    public Product findById(final String productId) {
-        Product found = null;
-
+    @Override
+    public Optional<Product> findById(final String productId) {
         for (final Product product : productData) {
             if (product.getProductId().equals(productId)) {
-                found = product;
-                break;
+                return Optional.of(product);
             }
         }
-
-        return found;
+        return Optional.empty();
     }
 
+    @Override
     public void update(final Product updated) {
         for (int i = 0; i < productData.size(); i++) {
             if (productData.get(i).getProductId().equals(updated.getProductId())) {
                 productData.set(i, updated);
-                break;
+                return;
             }
         }
     }
 
+    @Override
     public boolean deleteById(final String productId) {
-        boolean deleted = false;
-
         for (int i = 0; i < productData.size(); i++) {
             if (productData.get(i).getProductId().equals(productId)) {
                 productData.remove(i);
-                deleted = true;
-                break;
+                return true;
             }
         }
-
-        return deleted;
+        return false;
     }
 }

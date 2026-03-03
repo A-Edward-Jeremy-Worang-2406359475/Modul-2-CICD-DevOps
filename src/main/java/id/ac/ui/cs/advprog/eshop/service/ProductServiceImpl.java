@@ -1,44 +1,40 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import id.ac.ui.cs.advprog.eshop.repository.IProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+    private final IProductRepository productRepository;
+    private final ProductIdGenerator idGenerator;
 
-    // PMD: Each class should declare at least one constructor
-    public ProductServiceImpl(final ProductRepository productRepository) {
+    public ProductServiceImpl(final IProductRepository productRepository,
+                              final ProductIdGenerator idGenerator) {
         this.productRepository = productRepository;
+        this.idGenerator = idGenerator;
     }
 
     @Override
     public Product create(final Product product) {
         if (product.getProductId() == null || product.getProductId().isBlank()) {
-            product.setProductId(UUID.randomUUID().toString());
+            product.setProductId(idGenerator.generate());
         }
-        productRepository.create(product);
+        productRepository.save(product);
         return product;
     }
 
     @Override
     public List<Product> findAll() {
-        final Iterator<Product> productIterator = productRepository.findAll();
-        final List<Product> allProducts = new ArrayList<>();
-        productIterator.forEachRemaining(allProducts::add);
-        return allProducts;
+        return productRepository.findAll();
     }
 
     @Override
     public Product findById(final String productId) {
-        return productRepository.findById(productId);
+        return productRepository.findById(productId).orElse(null);
     }
 
     @Override
