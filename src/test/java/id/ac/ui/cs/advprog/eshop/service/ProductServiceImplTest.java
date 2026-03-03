@@ -1,7 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import id.ac.ui.cs.advprog.eshop.repository.IProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -22,7 +22,10 @@ class ProductServiceImplTest {
     private static final String CTOR_TAG = "pmd";
 
     @Mock
-    private ProductRepository productRepository;
+    private IProductRepository productRepository;
+
+    @Mock
+    private ProductIdGenerator idGenerator;
 
     @InjectMocks
     private ProductServiceImpl service;
@@ -40,15 +43,18 @@ class ProductServiceImplTest {
         product.setProductQuantity(1);
         product.setProductId(null);
 
+        when(idGenerator.generate()).thenReturn("generated-id");
+
         service.create(product);
 
         final ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
-        verify(productRepository).create(captor.capture());
+        verify(productRepository).save(captor.capture());
 
         final String generatedId = product.getProductId();
         final boolean isSuccessful =
                 generatedId != null
                         && !generatedId.isBlank()
+                        && "generated-id".equals(generatedId)
                         && generatedId.equals(captor.getValue().getProductId());
 
         assertTrue(isSuccessful, "Service should generate ID and pass same ID to repository");
@@ -63,21 +69,20 @@ class ProductServiceImplTest {
 
         service.create(product);
 
-        verify(productRepository).create(product);
+        verify(productRepository).save(product);
 
         final boolean isSuccessful = "fixed-id".equals(product.getProductId());
         assertTrue(isSuccessful, "Service should keep provided productId");
     }
 
     @Test
-    void findAllReturnsListFromIterator() {
+    void findAllReturnsList() {
         final Product product1 = new Product();
         product1.setProductId("1");
         final Product product2 = new Product();
         product2.setProductId("2");
 
-        final Iterator<Product> iterator = Arrays.asList(product1, product2).iterator();
-        when(productRepository.findAll()).thenReturn(iterator);
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         final List<Product> result = service.findAll();
 
@@ -88,7 +93,22 @@ class ProductServiceImplTest {
                         && "1".equals(result.get(0).getProductId())
                         && "2".equals(result.get(1).getProductId());
 
-        assertTrue(isSuccessful, "findAll should convert iterator to list preserving order");
+        assertTrue(isSuccessful, "findAll should return list preserving order");
+    }
+
+    @Test
+    void findByIdReturnsProductWhenPresent() {
+        final Product product = new Product();
+        product.setProductId("1");
+
+        when(productRepository.findById("1")).thenReturn(Optional.of(product));
+
+        final Product result = service.findById("1");
+
+        verify(productRepository).findById("1");
+
+        final boolean isSuccessful = result != null && "1".equals(result.getProductId());
+        assertTrue(isSuccessful, "findById should return product when present");
     }
 
     @Test
