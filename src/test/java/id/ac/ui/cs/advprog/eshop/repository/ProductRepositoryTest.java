@@ -2,43 +2,38 @@ package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
 class ProductRepositoryTest {
 
-    @InjectMocks
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository = new ProductRepository();
 
     @Test
-    void testCreateAndFind() {
+    void testSaveAndFindAll() {
         final Product product = new Product();
         product.setProductId("eb558e9f-1c39-460e-8860-71afa6af63bd6");
         product.setProductName("Sampo Cap Bambang");
         product.setProductQuantity(100);
 
-        productRepository.create(product);
+        productRepository.save(product);
 
-        final Iterator<Product> iterator = productRepository.findAll();
+        final List<Product> list = productRepository.findAll();
         final boolean isSuccessful =
-                iterator.hasNext()
-                        && product.getProductId().equals(iterator.next().getProductId());
+                !list.isEmpty()
+                        && product.getProductId().equals(list.get(0).getProductId());
 
-        assertTrue(isSuccessful, "Created product should appear in repository iterator");
+        assertTrue(isSuccessful, "Saved product should appear in repository list");
     }
 
     @Test
     void testFindAllIfEmpty() {
-        final Iterator<Product> iterator = productRepository.findAll();
-        final boolean isSuccessful = !iterator.hasNext();
+        final List<Product> list = productRepository.findAll();
+        final boolean isSuccessful = list.isEmpty();
 
-        assertTrue(isSuccessful, "Empty repository should return iterator with no elements");
+        assertTrue(isSuccessful, "Empty repository should return empty list");
     }
 
     @Test
@@ -47,22 +42,20 @@ class ProductRepositoryTest {
         product1.setProductId("id-1");
         product1.setProductName("P1");
         product1.setProductQuantity(100);
-        productRepository.create(product1);
+        productRepository.save(product1);
 
         final Product product2 = new Product();
         product2.setProductId("id-2");
         product2.setProductName("P2");
         product2.setProductQuantity(50);
-        productRepository.create(product2);
+        productRepository.save(product2);
 
-        final Iterator<Product> iterator = productRepository.findAll();
+        final List<Product> list = productRepository.findAll();
         final boolean isSuccessful =
-                iterator.hasNext()
-                        && "id-1".equals(iterator.next().getProductId())
-                        && iterator.hasNext()
-                        && "id-2".equals(iterator.next().getProductId())
-                        && !iterator.hasNext();
+                list.size() == 2
+                        && "id-1".equals(list.get(0).getProductId())
+                        && "id-2".equals(list.get(1).getProductId());
 
-        assertTrue(isSuccessful, "Iterator should return both products in insertion order");
+        assertTrue(isSuccessful, "List should return both products in insertion order");
     }
 }

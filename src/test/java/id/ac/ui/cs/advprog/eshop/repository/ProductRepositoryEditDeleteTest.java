@@ -4,6 +4,8 @@ import id.ac.ui.cs.advprog.eshop.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductRepositoryEditDeleteTest {
@@ -30,12 +32,14 @@ class ProductRepositoryEditDeleteTest {
     @Test
     void updateExistingProductUpdatesStoredProduct() {
         final Product original = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
-        productRepository.create(original);
+        productRepository.save(original);
 
         final Product updated = makeProduct(PRODUCT_ID_1, "Shampoo A (Edited)", 99);
         productRepository.update(updated);
 
-        final Product fromRepo = productRepository.findById(PRODUCT_ID_1);
+        final Optional<Product> fromRepoOpt = productRepository.findById(PRODUCT_ID_1);
+        final Product fromRepo = fromRepoOpt.orElse(null);
+
         final boolean isSuccessful =
                 fromRepo != null
                         && PRODUCT_ID_1.equals(fromRepo.getProductId())
@@ -48,13 +52,13 @@ class ProductRepositoryEditDeleteTest {
     @Test
     void updateNonExistingProductDoesNothing() {
         final Product original = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
-        productRepository.create(original);
+        productRepository.save(original);
 
         final Product updated = makeProduct(PRODUCT_ID_MISSING, "Does Not Exist", 123);
         productRepository.update(updated);
 
-        final Product fromRepo = productRepository.findById(PRODUCT_ID_1);
-        final Product missing = productRepository.findById(PRODUCT_ID_MISSING);
+        final Product fromRepo = productRepository.findById(PRODUCT_ID_1).orElse(null);
+        final Product missing = productRepository.findById(PRODUCT_ID_MISSING).orElse(null);
 
         final boolean isSuccessful =
                 fromRepo != null
@@ -69,13 +73,13 @@ class ProductRepositoryEditDeleteTest {
     void deleteExistingProductRemovesProductAndReturnsTrue() {
         final Product product1 = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
         final Product product2 = makeProduct(PRODUCT_ID_2, "Shampoo B", 20);
-        productRepository.create(product1);
-        productRepository.create(product2);
+        productRepository.save(product1);
+        productRepository.save(product2);
 
         final boolean deleted = productRepository.deleteById(PRODUCT_ID_1);
 
-        final Product shouldBeMissing = productRepository.findById(PRODUCT_ID_1);
-        final Product shouldRemain = productRepository.findById(PRODUCT_ID_2);
+        final Product shouldBeMissing = productRepository.findById(PRODUCT_ID_1).orElse(null);
+        final Product shouldRemain = productRepository.findById(PRODUCT_ID_2).orElse(null);
 
         final boolean isSuccessful =
                 deleted && shouldBeMissing == null && shouldRemain != null;
@@ -86,12 +90,12 @@ class ProductRepositoryEditDeleteTest {
     @Test
     void deleteNonExistingProductReturnsFalseAndKeepsData() {
         final Product product1 = makeProduct(PRODUCT_ID_1, "Shampoo A", 10);
-        productRepository.create(product1);
+        productRepository.save(product1);
 
         final boolean deleted = productRepository.deleteById(PRODUCT_ID_MISSING);
 
-        final Product stillThere = productRepository.findById(PRODUCT_ID_1);
-        final Product missing = productRepository.findById(PRODUCT_ID_MISSING);
+        final Product stillThere = productRepository.findById(PRODUCT_ID_1).orElse(null);
+        final Product missing = productRepository.findById(PRODUCT_ID_MISSING).orElse(null);
 
         final boolean isSuccessful =
                 !deleted && stillThere != null && missing == null;
