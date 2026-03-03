@@ -1,51 +1,56 @@
-package id.ac.ui.cs.advprog.eshop.service;
+package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Car;
-import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-@Service
+@Repository
+public class CarRepository implements ICarRepository {
 
-public class CarServiceImpl implements CarService {
+    private final CarIdGenerator idGenerator;
+    private final List<Car> carData = new ArrayList<>();
 
-    @Autowired
-    private CarRepository carRepository;
+    public CarRepository(CarIdGenerator idGenerator) {
+        this.idGenerator = idGenerator;
+    }
 
     @Override
-    public Car create(Car car) {
-        // TODO Auto-generated method stub
-        carRepository.create(car);
+    public Car save(Car car) {
+        if (car.getCarId() == null) {
+            car.setCarId(idGenerator.generate());
+        }
+        carData.add(car);
         return car;
     }
 
     @Override
     public List<Car> findAll() {
-        Iterator<Car> carIterator = carRepository.findAll();
-        List<Car> allCar = new ArrayList<>();
-        carIterator.forEachRemaining(allCar::add);
-        return allCar;
+        return new ArrayList<>(carData);
     }
 
     @Override
-    public Car findById(String carId) {
-        Car car = carRepository.findById(carId);
-        return car;
+    public Optional<Car> findById(String id) {
+        return carData.stream()
+                .filter(car -> car.getCarId().equals(id))
+                .findFirst();
     }
 
     @Override
-    public void update(String carId, Car car) {
-        // TODO Auto-generated method stub
-        carRepository.update(carId, car);
+    public Car update(String id, Car updatedCar) {
+        Car existing = findById(id).orElse(null);
+        if (existing == null) return null;
+
+        existing.setCarName(updatedCar.getCarName());
+        existing.setCarColor(updatedCar.getCarColor());
+        existing.setCarQuantity(updatedCar.getCarQuantity());
+        return existing;
     }
 
     @Override
-    public void deleteCarById(String carId) {
-        // TODO Auto-generated method stub
-        carRepository.delete(carId);
+    public void deleteById(String id) {
+        carData.removeIf(car -> car.getCarId().equals(id));
     }
 }
