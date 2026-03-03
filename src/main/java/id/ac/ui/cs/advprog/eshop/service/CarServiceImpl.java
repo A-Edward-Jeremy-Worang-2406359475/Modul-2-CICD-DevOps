@@ -1,56 +1,42 @@
-package id.ac.ui.cs.advprog.eshop.repository;
+package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Car;
-import org.springframework.stereotype.Repository;
+import id.ac.ui.cs.advprog.eshop.repository.ICarRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Repository
-public class CarRepository implements ICarRepository {
+@Service
+public class CarServiceImpl implements CarService {
 
-    private final CarIdGenerator idGenerator;
-    private final List<Car> carData = new ArrayList<>();
+    private final ICarRepository carRepository;
 
-    public CarRepository(CarIdGenerator idGenerator) {
-        this.idGenerator = idGenerator;
+    public CarServiceImpl(ICarRepository carRepository) {
+        this.carRepository = carRepository;
     }
 
     @Override
-    public Car save(Car car) {
-        if (car.getCarId() == null) {
-            car.setCarId(idGenerator.generate());
-        }
-        carData.add(car);
-        return car;
+    public Car create(Car car) {
+        return carRepository.save(car);
     }
 
     @Override
     public List<Car> findAll() {
-        return new ArrayList<>(carData);
+        return carRepository.findAll();
     }
 
     @Override
-    public Optional<Car> findById(String id) {
-        return carData.stream()
-                .filter(car -> car.getCarId().equals(id))
-                .findFirst();
+    public Car findById(String carId) {
+        return carRepository.findById(carId).orElse(null);
     }
 
     @Override
-    public Car update(String id, Car updatedCar) {
-        Car existing = findById(id).orElse(null);
-        if (existing == null) return null;
-
-        existing.setCarName(updatedCar.getCarName());
-        existing.setCarColor(updatedCar.getCarColor());
-        existing.setCarQuantity(updatedCar.getCarQuantity());
-        return existing;
+    public void update(String carId, Car car) {
+        carRepository.update(carId, car);
     }
 
     @Override
-    public void deleteById(String id) {
-        carData.removeIf(car -> car.getCarId().equals(id));
+    public void deleteCarById(String carId) {
+        carRepository.deleteById(carId);
     }
 }
