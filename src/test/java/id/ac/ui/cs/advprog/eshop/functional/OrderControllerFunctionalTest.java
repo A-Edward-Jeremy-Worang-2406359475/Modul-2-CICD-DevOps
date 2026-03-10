@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.functional;
 
+import id.ac.ui.cs.advprog.eshop.controller.OrderController;
 import id.ac.ui.cs.advprog.eshop.service.OrderService;
 import id.ac.ui.cs.advprog.eshop.service.PaymentService;
 import org.junit.jupiter.api.DisplayName;
@@ -12,10 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import id.ac.ui.cs.advprog.eshop.controller.OrderController;
-
 @WebMvcTest(OrderController.class)
-class OrderControllerFunctionalTest {
+public class OrderControllerFunctionalTest {
 
     @Autowired
     private MockMvc mockMvc;
