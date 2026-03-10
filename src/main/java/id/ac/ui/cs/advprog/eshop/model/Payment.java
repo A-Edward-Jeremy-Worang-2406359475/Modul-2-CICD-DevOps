@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import enums.PaymentStatus;
 import lombok.Getter;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ public class Payment {
     private Map<String, String> paymentData;
 
     public Payment(String id, Order order, String method, String status, Map<String, String> paymentData) {
-        if (!isValidStatus(status)) {
+        if (!PaymentStatus.contains(status)) {
             throw new IllegalArgumentException();
         }
 
@@ -25,15 +26,9 @@ public class Payment {
     }
 
     public void setStatus(String status) {
-        if (!isValidStatus(status)) {
+        if (!PaymentStatus.contains(status)) {
             throw new IllegalArgumentException();
         }
         this.status = status;
-    }
-
-    private boolean isValidStatus(String status) {
-        return "PENDING".equals(status)
-                || "SUCCESS".equals(status)
-                || "REJECTED".equals(status);
     }
 }
