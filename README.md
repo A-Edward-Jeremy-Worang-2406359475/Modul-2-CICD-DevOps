@@ -171,3 +171,62 @@ repository asli.
 Jika ingin mengganti penyimpanan dari in-memory ke database, kita harus mengubah banyak file sekaligus.
 
 -Kelas menjadi terlalu besar dan kompleks dimana itu melanggar SRP
+
+
+# Module 4 Reflections
+
+## Reflection 4 tutorial
+
+1. Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best
+   Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this
+   TDD flow is useful enough for you or not. If not, explain things that you need to do next time
+   you make more tests.
+
+Saya merasa bahwa alur TDD cukup bermanfaat dalam pengembangan fitur pada tutorial inii.Dengan menulis test terlebih 
+dahulu saya menjadi lebih fokus pada perilaku yang diharapkan dari program sebelum memikirkan detail implementasinya.
+Saya harus memikirkan terlebih dahulu input, output, dan kemungkinan edge case yang perlu ditangani. 
+Hal ini membuat proses pengembangan menjadi lebih terarah dan mengurangi kemungkinan menulis logika yang tidak diperlukan.
+
+Siklus rede green dan refactorr juga sangat membantu karena membagi proses kerja menjadi langkah-langkah kecil yang 
+lebih jelas. Pada tahap RED, saya mendefinisikan perilaku yang diinginkan melalui test yang gagal. 
+Pada tahap GREEN, saya hanya perlu menulis kode secukupnya agar test lolos. 
+Pada tahap REFACTOR, saya bisa memperbaiki struktur kode tanpa takut merusak perilaku 
+yang sudah benar karena test berfungsi sebagai pengaman. 
+Hal ini membuat saya lebih percaya diri saat melakukan perubahan pada kode.
+Namun, saya juga menyadari bahwa menulis test yang baik tidak selalu mudah. Kadang saya terlalu fokus agar test cepat lolos,
+bukan pada kualitas dan cakupan test itu sendiri. Ke depannya, saya perlu lebih baik dalam merancang test 
+dengan mengidentifikasi edge case lebih awal, memastikan bahwa test benar-benar memeriksa perilaku program dan bukan detail 
+implementasi semata, serta memberi nama test yang lebih jelas sesuai skenario yang diuji. 
+Secara keseluruhan, saya merasa TDD bermanfaat, tetapi saya masih perlu lebih banyak latihan agar dapat menggunakannya 
+dengan lebih efektif.
+
+
+2. You have created unit tests in Tutorial. Now reflect whether your tests have successfully
+   followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you
+   create more tests.
+
+Fast: Tesst berjalan dengan cepat karena hanya menguji unit kecil seperti model, 
+repository, dan service. Test juga tidak bergantung pada sistem eksternal seperti database atau jaringgan.
+
+Independent: di sini pada umumnya bersifat independenn karena setiap test menyiapkan datanya sendiri melalui 
+setup method dan tidak bergantung pada hasil dari test lain. Artinya 
+satu test dapat dijalankan tanpa harus menunggu test lain.
+
+Repeatable: Test bersifat repeatable karena menggunakan data yang terkontrol dan deterministik. 
+Jika test dijalankan berulang kali, hasilnya seharusnya tetap sama selama kode tidak berubah.
+
+Sself validating: hal tersebut bersifat self validating karena menggunakan assertion seperti assertEquals, 
+assertThrows, assertNull, dan assertTrue. Dengan demikian, hasil test langsung terlihat pass atau fail 
+tanpa perlu pemeriksaan manual.
+
+Timely Juga test ditulis berdekatan dengan proses implementasi, 
+terutama dalam alur TDD. Ini sesuai dengan prinsip bahwa test sebaiknya ditulis pada waktu yang tepat, 
+idealnya sebelum atau saat implementasi dilakukan, bukan setelah semuanya selesai.
+
+Walaupun begitu, masih ada hal yang bisa saya tingkatkan. 
+Beberapa test mungkin masih terlalu terikat pada asumsi implementasi tertentu, 
+bukan sepenuhnya pada perilaku yang terlihat dari luar. Ke depannya, saya perlu membuat test yang lebih jelas, 
+lebih ringkas, dan memastikan bahwa setiap test hanya memverifikasi satu perilaku spesifik. 
+Saya juga perlu terus memperbaiki penamaan method test agar maksud dari setiap test dapat langsung dipahami. 
+Secara keseluruhan, saya menilai bahwa test yang dibuat sudah cukup mengikuti prinsip FIRST
+meskipun masih ada ruang untuk perbaikan dalam kualitas desain test.
