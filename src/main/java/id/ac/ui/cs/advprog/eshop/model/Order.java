@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-
+//untuk commit add order model skeleton
 @Builder
 @Getter
 public class Order {
