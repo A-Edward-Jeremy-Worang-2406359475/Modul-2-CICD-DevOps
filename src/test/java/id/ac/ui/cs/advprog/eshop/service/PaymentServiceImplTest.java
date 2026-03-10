@@ -1,9 +1,9 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
-import id.ac.ui.cs.advprog.eshop.model.OrderStatus;
+import enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
-import id.ac.ui.cs.advprog.eshop.model.PaymentStatus;
+import enums.PaymentStatus;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,7 +144,6 @@ class PaymentServiceImplTest {
                 new HashMap<>()
         );
 
-        doReturn(payment).when(paymentRepository).findById(payment.getId());
         doReturn(payment).when(paymentRepository).save(any(Payment.class));
 
         Payment result = paymentService.setStatus(payment, PaymentStatus.SUCCESS.getValue());
@@ -164,7 +163,6 @@ class PaymentServiceImplTest {
                 new HashMap<>()
         );
 
-        doReturn(payment).when(paymentRepository).findById(payment.getId());
         doReturn(payment).when(paymentRepository).save(any(Payment.class));
 
         Payment result = paymentService.setStatus(payment, PaymentStatus.REJECTED.getValue());
