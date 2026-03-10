@@ -9,17 +9,14 @@ import java.util.List;
 @Repository
 public class PaymentRepository {
 
-    private List<Payment> paymentData = new ArrayList<>();
+    private final List<Payment> paymentData = new ArrayList<>();
 
     public Payment save(Payment payment) {
-        int i = 0;
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getId().equals(payment.getId())) {
-                paymentData.remove(i);
-                paymentData.add(i, payment);
+        for (int i = 0; i < paymentData.size(); i++) {
+            if (paymentData.get(i).getId().equals(payment.getId())) {
+                paymentData.set(i, payment);
                 return payment;
             }
-            i += 1;
         }
 
         paymentData.add(payment);
@@ -27,9 +24,9 @@ public class PaymentRepository {
     }
 
     public Payment findById(String id) {
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getId().equals(id)) {
-                return savedPayment;
+        for (Payment payment : paymentData) {
+            if (payment.getId().equals(id)) {
+                return payment;
             }
         }
         return null;
