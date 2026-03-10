@@ -15,32 +15,15 @@ import java.util.UUID;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    private static final String VOUCHER_CODE_METHOD = "Voucher Code";
+    private static final String CASH_ON_DELIVERY_METHOD = "Cash on Delivery";
+
     @Autowired
     private PaymentRepository paymentRepository;
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        String status;
-
-        if ("Voucher Code".equals(method)) {
-            String voucherCode = paymentData.get("voucherCode");
-            if (isValidVoucherCode(voucherCode)) {
-                status = PaymentStatus.SUCCESS.getValue();
-            } else {
-                status = PaymentStatus.REJECTED.getValue();
-            }
-        } else if ("Cash on Delivery".equals(method)) {
-            String address = paymentData.get("address");
-            String deliveryFee = paymentData.get("deliveryFee");
-
-            if (isNullOrEmpty(address) || isNullOrEmpty(deliveryFee)) {
-                status = PaymentStatus.REJECTED.getValue();
-            } else {
-                status = PaymentStatus.SUCCESS.getValue();
-            }
-        } else {
-            throw new IllegalArgumentException();
-        }
+        String status = determinePaymentStatus(method, paymentData);
 
         Payment payment = new Payment(
                 UUID.randomUUID().toString(),
@@ -76,6 +59,22 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findAll();
     }
 
+    private String determinePaymentStatus(String method, Map<String, String> paymentData) {
+        if (VOUCHER_CODE_METHOD.equals(method)) {
+            return isValidVoucherCode(paymentData.get("voucherCode"))
+                    ? PaymentStatus.SUCCESS.getValue()
+                    : PaymentStatus.REJECTED.getValue();
+        }
+
+        if (CASH_ON_DELIVERY_METHOD.equals(method)) {
+            return isValidCashOnDelivery(paymentData)
+                    ? PaymentStatus.SUCCESS.getValue()
+                    : PaymentStatus.REJECTED.getValue();
+        }
+
+        throw new IllegalArgumentException();
+    }
+
     private boolean isValidVoucherCode(String voucherCode) {
         if (voucherCode == null || voucherCode.length() != 16 || !voucherCode.startsWith("ESHOP")) {
             return false;
@@ -89,6 +88,11 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return digitCount == 8;
+    }
+
+    private boolean isValidCashOnDelivery(Map<String, String> paymentData) {
+        return !isNullOrEmpty(paymentData.get("address"))
+                && !isNullOrEmpty(paymentData.get("deliveryFee"));
     }
 
     private boolean isNullOrEmpty(String value) {
