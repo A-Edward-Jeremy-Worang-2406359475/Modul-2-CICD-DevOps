@@ -47,21 +47,21 @@ class OrderTest {
     @Test
     void testCreateOrderDefaultStatus() {
         Order order = new Order(
-                id: "13652556-012a-4c07-b546-54eb1396d79b",
+                "13652556-012a-4c07-b546-54eb1396d79b",
                 this.products,
-                orderTime: 1708560000L,
-                author: "Safira Sudrajat"
+                1708560000L,
+                "Safira Sudrajat"
     );
 
         assertSame(this.products, order.getProducts());
-        assertEquals(expected: 2, order.getProducts().size());
-        assertEquals(expected: "Sampo Cap Bangau", order.getProducts().get(0).getProductName());
-        assertEquals(expected: "Sabun Cap Usep", order.getProducts().get(1).getProductName());
+        assertEquals(2, order.getProducts().size());
+        assertEquals("Sampo Cap Bangau", order.getProducts().get(0).getProductName());
+        assertEquals("Sabun Cap Usep", order.getProducts().get(1).getProductName());
 
-        assertEquals(expected: "13652556-012a-4c07-b546-54eb1396d79b", order.getId());
-        assertEquals(expected: 1708560000L, order.getOrderTime());
-        assertEquals(expected: "Safira Sudrajat", order.getAuthor());
-        assertEquals(expected: "WAITING_PAYMENT", order.getStatus());
+        assertEquals("13652556-012a-4c07-b546-54eb1396d79b", order.getId());
+        assertEquals( 1708560000L, order.getOrderTime());
+        assertEquals( "Safira Sudrajat", order.getAuthor());
+        assertEquals("WAITING_PAYMENT", order.getStatus());
     }
 
     @Test
